@@ -22,6 +22,8 @@ TBD
 
 ## Usage
 
+for detailed usage, use:
+
     python path/to/PREP.py -h
 
 ## Test example
