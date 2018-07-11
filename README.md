@@ -41,5 +41,3 @@ qiliu@tongji.edu.cn
 Biological and Medical Big data Mining Lab  
 Tongji University    
 Shanghai, China. 
-http://bm2.runyoo.com/
-
