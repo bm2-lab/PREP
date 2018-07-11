@@ -33,7 +33,9 @@ To run the provided test files with PREP the following command can be run:
 ## Contact   
 
 Chi Zhou  
-1410782Chiz@tongji.edu.cn  
+1410782Chiz@tongji.edu.cn 
+Qi Liu
+qiliu@tongji.edu.cn
 
 Biological and Medical Big data Mining Lab  
 Tongji University    
