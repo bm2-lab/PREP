@@ -1,0 +1,1 @@
+python RNAEditing2neo.py -i test.vcf -o test -s test -a HLA-A02:01 -l 9 -e test.FPKM.txt -t test_editing_level.txt

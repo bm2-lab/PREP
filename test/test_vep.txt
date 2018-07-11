@@ -1,0 +1,59 @@
+## ENSEMBL VARIANT EFFECT PREDICTOR v89.2
+## Output produced at 2018-07-06 16:48:22
+## Using cache in /home/zhouchi/database/Annotation/vep_data_89_37/homo_sapiens/89_GRCh37
+## Using API version 89, DB version ?
+## ensembl-variation version 89.c387308
+## ensembl-io version 89.984214b
+## ensembl version 89.ce16adf
+## ensembl-funcgen version 89.678099a
+## HGMD-PUBLIC version 20162
+## assembly version GRCh37.p13
+## polyphen version 2.2.2
+## COSMIC version 78
+## dbSNP version 147
+## gencode version GENCODE 19
+## ESP version 20141103
+## ExAC version 0.3
+## ClinVar version 201610
+## sift version sift5.2.2
+## regbuild version 1.0
+## 1000genomes version phase3
+## genebuild version 2011-04
+## Column descriptions:
+## Uploaded_variation : Identifier of uploaded variant
+## Location : Location of variant in standard coordinate format (chr:start or chr:start-end)
+## Allele : The variant allele used to calculate the consequence
+## Gene : Stable ID of affected gene
+## Feature : Stable ID of feature
+## Feature_type : Type of feature - Transcript, RegulatoryFeature or MotifFeature
+## Consequence : Consequence type
+## cDNA_position : Relative position of base pair in cDNA sequence
+## CDS_position : Relative position of base pair in coding sequence
+## Protein_position : Relative position of amino acid in protein
+## Amino_acids : Reference and variant amino acids
+## Codons : Reference and variant codon sequence
+## Existing_variation : Identifier(s) of co-located known variants
+## Extra column keys:
+## IMPACT : Subjective impact classification of consequence type
+## DISTANCE : Shortest distance from variant to transcript
+## STRAND : Strand of the feature (1/-1)
+## FLAGS : Transcript quality flags
+## SYMBOL : Gene symbol (e.g. HGNC)
+## SYMBOL_SOURCE : Source of gene symbol
+## HGNC_ID : Stable identifer of HGNC gene symbol
+## CANONICAL : Indicates if transcript is canonical for this gene
+#Uploaded_variation	Location	Allele	Gene	Feature	Feature_type	Consequence	cDNA_position	CDS_position	Protein_position	Amino_acids	Codons	Existing_variation	Extra
+chr20_47711355_A/G	chr20:47711355	G	ENSG00000124207	ENST00000262982	Transcript	missense_variant	2804	2681	894	E/G	gAa/gGa	-	IMPACT=MODERATE;STRAND=1;SYMBOL=CSE1L;SYMBOL_SOURCE=HGNC;HGNC_ID=2431;CANONICAL=YES
+chr7_45954522_T/C	chr7:45954522	C	ENSG00000146674	ENST00000381083	Transcript	missense_variant	902	791	264	K/R	aAg/aGg	-	IMPACT=MODERATE;STRAND=-1;SYMBOL=IGFBP3;SYMBOL_SOURCE=HGNC;HGNC_ID=5472;CANONICAL=YES
+chr13_52604264_A/G	chr13:52604264	G	ENSG00000253797	ENST00000521776	Transcript	missense_variant	2057	1324	442	S/G	Agc/Ggc	-	IMPACT=MODERATE;STRAND=1;SYMBOL=UTP14C;SYMBOL_SOURCE=HGNC;HGNC_ID=20321;CANONICAL=YES
+chr13_52604880_A/G	chr13:52604880	G	ENSG00000253797	ENST00000521776	Transcript	missense_variant	2673	1940	647	Q/R	cAg/cGg	-	IMPACT=MODERATE;STRAND=1;SYMBOL=UTP14C;SYMBOL_SOURCE=HGNC;HGNC_ID=20321;CANONICAL=YES
+chr11_130109719_T/C	chr11:130109719	C	ENSG00000196323	ENST00000525842	Transcript	missense_variant	1459	1091	364	D/G	gAt/gGt	-	IMPACT=MODERATE;STRAND=-1;SYMBOL=ZBTB44;SYMBOL_SOURCE=HGNC;HGNC_ID=25001;CANONICAL=YES
+chr14_72200433_A/G	chr14:72200433	G	ENSG00000197555	ENST00000555818	Transcript	missense_variant	5323	4975	1659	R/G	Agg/Ggg	-	IMPACT=MODERATE;STRAND=1;SYMBOL=SIPA1L1;SYMBOL_SOURCE=HGNC;HGNC_ID=20284;CANONICAL=YES
+chr2_102486180_A/G	chr2:102486180	G	ENSG00000071054	ENST00000347699	Transcript	missense_variant	2317	2317	773	T/A	Acg/Gcg	-	IMPACT=MODERATE;STRAND=1;SYMBOL=MAP4K4;SYMBOL_SOURCE=HGNC;HGNC_ID=6866;CANONICAL=YES
+chr19_47225529_T/C	chr19:47225529	C	ENSG00000090372	ENST00000391910	Transcript	missense_variant	2447	1996	666	R/G	Agg/Ggg	-	IMPACT=MODERATE;STRAND=-1;SYMBOL=STRN4;SYMBOL_SOURCE=HGNC;HGNC_ID=15721;CANONICAL=YES
+chr1_113242909_A/G	chr1:113242909	G	ENSG00000155363	ENST00000413052	Transcript	missense_variant	3257	2867	956	Q/R	cAa/cGa	-	IMPACT=MODERATE;STRAND=1;SYMBOL=MOV10;SYMBOL_SOURCE=HGNC;HGNC_ID=7200;CANONICAL=YES
+chr19_59061154_A/G	chr19:59061154	G	ENSG00000130726	ENST00000253024	Transcript	missense_variant	2322	2033	678	E/G	gAg/gGg	-	IMPACT=MODERATE;STRAND=1;SYMBOL=TRIM28;SYMBOL_SOURCE=HGNC;HGNC_ID=16384;CANONICAL=YES
+chr20_47711321_A/G	chr20:47711321	G	ENSG00000124207	ENST00000262982	Transcript	missense_variant	2770	2647	883	T/A	Acc/Gcc	-	IMPACT=MODERATE;STRAND=1;SYMBOL=CSE1L;SYMBOL_SOURCE=HGNC;HGNC_ID=2431;CANONICAL=YES
+chr15_70351034_T/C	chr15:70351034	C	ENSG00000140332	ENST00000558939	Transcript	missense_variant	2264	886	296	T/A	Aca/Gca	-	IMPACT=MODERATE;STRAND=-1;SYMBOL=TLE3;SYMBOL_SOURCE=HGNC;HGNC_ID=11839;CANONICAL=YES
+chr1_26128567_A/G	chr1:26128567	G	ENSG00000162430	ENST00000361547	Transcript	missense_variant	417	362	121	Q/R	cAa/cGa	-	IMPACT=MODERATE;STRAND=1;SYMBOL=SEPN1;SYMBOL_SOURCE=HGNC;HGNC_ID=15999;CANONICAL=YES
+chr10_92662039_A/G	chr10:92662039	G	ENSG00000148688	ENST00000413330	Transcript	missense_variant	871	836	279	N/S	aAt/aGt	-	IMPACT=MODERATE;STRAND=1;SYMBOL=RPP30;SYMBOL_SOURCE=HGNC;HGNC_ID=17688;CANONICAL=YES
