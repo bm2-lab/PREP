@@ -1,9 +1,9 @@
 # PREP: Prioritizing of RNA Editing-based Peptides
 
-Given somatic RNA-editing mutation as input, PREP identify and evaluate the potential immunogenicity of RNA editing based peptides. Detailed information refer to XXX
+Given somatic RNA-editing mutation as input, PREP identify and evaluate the potential immunogenicity of RNA editing based peptides. Detailed information please refer to citation
 
 #### Citation:
-TBD
+Somatic A-to-I RNA Editing Generates Potential Neoantigens in Breast Cancer, Submitted, 2018.
 
 ## Dependencies  
 
