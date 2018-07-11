@@ -24,7 +24,7 @@ Given somatic RNA-editing mutation as input, PREP identify and evaluate the pote
 
 ## Test example
 
-To run the provided test files with iTuNES the following command can be run: 
+To run the provided test files with PREP the following command can be run: 
 
     python path/to/PREP.py -i test.vcf -o test -s test -a HLA-A02:01 -l 9 -e test.FPKM.txt -t test_editing_level.txt
     
