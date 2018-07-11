@@ -2,45 +2,19 @@ import pandas as pd
 import numpy as np
 import sys,getopt,os
 import re
-import os,sys,time
-import multiprocessing
-import shutil 
 import math
 from pyper import *
 from sklearn import preprocessing
-from sklearn.decomposition import PCA
-from matplotlib import pyplot as plt
-from sklearn.semi_supervised import label_propagation
-import itertools
-from scipy import linalg
-import matplotlib as mpl
-from sklearn import mixture
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from imblearn.under_sampling import RandomUnderSampler
-from imblearn.metrics import classification_report_imbalanced
 from Bio.Blast import NCBIXML
 from Bio import pairwise2
 from Bio.SubsMat import MatrixInfo as matlist
 from math import log, exp
-from scipy import interp
-from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import StratifiedKFold
 import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
-from sklearn import cross_validation, metrics
-from sklearn.grid_search import GridSearchCV
-import matplotlib.pylab as plt
-from sklearn.model_selection import train_test_split
-from Bio.Blast import NCBIXML
-from Bio import pairwise2
-from Bio.SubsMat import MatrixInfo as matlist
-from math import log, exp
 from sklearn.ensemble import RandomForestClassifier  
-from sklearn.preprocessing import StandardScaler
-from imblearn.over_sampling import SMOTE
-from collections import Counter
-from sklearn.cross_validation import cross_val_score
 #####prepare fasta format input file for netMHC######
 opts,args=getopt.getopt(sys.argv[1:],"hi:o:s:a:l:e:t:",["input_vcf_file","out_dir","sample_id","hla_allele","pep_len","exp_file_path","editing_level_file"])
 input_vcf_file =""
