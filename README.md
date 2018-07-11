@@ -2,6 +2,8 @@
 
 Given somatic RNA-editing mutation as input, PREP identify and evaluate the potential immunogenicity of RNA editing based peptides. Detailed information refer to XXX
 
+#### Citation:
+TBD
 
 ## Dependencies  
 
