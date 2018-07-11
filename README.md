@@ -40,4 +40,4 @@ http://bm2.runyoo.com/
 
 ## Algorithmic Flow Chart
 
-![](doc/PREP/workflow.jpg)
+![](doc/workflow.jpg)
