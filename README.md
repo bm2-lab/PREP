@@ -7,5 +7,5 @@ Given somatic RNA-editing mutation as input, PREP identify and evaluate the pote
 
 #### Required software:
 * [NetMHCpan 4.0](http://www.cbs.dtu.dk/cgi-bin/nph-sw_request?netMHCpan)
-* [Variant Effect Predictor] (https://github.com/Ensembl/ensembl-vep)
+* [Variant Effect Predictor](https://github.com/Ensembl/ensembl-vep)
 
