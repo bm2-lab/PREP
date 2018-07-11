@@ -22,7 +22,7 @@ TBD
 
 ## Usage
 
-for detailed usage, use:
+For detailed usage, use:
 
     python path/to/PREP.py -h
 
