@@ -57,8 +57,9 @@ for opt,value in opts:
 #print coverage
 if (input_vcf_file =="" or out_dir =="" or sample_id=="" or hla_allele==""):
 	print USAGE
-	sys.exit(2)	
-cmd_vep="vep -i " + input_vcf_file + " --cache --dir " + '/home/zhouchi/database/Annotation/vep_data_89_37/' + " --dir_cache " + '/home/zhouchi/database/Annotation/vep_data_89_37/' + " --force_overwrite --canonical --symbol -o STDOUT --offline | filter_vep --ontology --filter \"CANONICAL is YES and Consequence is missense_variant\" -o " + out_dir + '/' + sample_id +'_vep.txt' + " --force_overwrite"
+	sys.exit(2)
+vep_cache='/home/zhouchi/database/Annotation/vep_data_89_37/'
+cmd_vep="vep -i " + input_vcf_file + " --cache --dir " + vep_cache + " --dir_cache " + vep_cache + " --force_overwrite --canonical --symbol -o STDOUT --offline | filter_vep --ontology --filter \"CANONICAL is YES and Consequence is missense_variant\" -o " + out_dir + '/' + sample_id +'_vep.txt' + " --force_overwrite"
 print cmd_vep
 os.system(cmd_vep)
 cmd_edit="python bin/edit2fasta.py -i " + out_dir + "/" + sample_id +'_vep.txt' + " -o " + out_dir + " -s " + sample_id
