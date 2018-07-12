@@ -85,26 +85,12 @@ del data_out["POS"]
 ##some functions
 ###hydrophobicity
 #preprocess
-a=26
-k=4.86936
-M=1. #default concentration of mutant peptides
-W=1. #default concentration of wildtype peptides
 
-WEPS=0.0003
 HYDROPHOBIC_RESIDUES="AILMFWYV"
 WEIRD_RESIDUES="CGP"
 hydro_score={"A":1.8,"C":2.5,"D":-3.5,"E":-3.5,"F":2.8,"G":-0.4,"H":-3.2,"I":4.5,"K":-3.9,"L":3.8,"M":1.9,"N":-3.5,"P":-1.6,"Q":-3.5,"R":-4.5,"S":-0.8,"T":-0.7,"V":4.2,"W":-0.9,"Y":-1.3,"X":0.0}
 
 
-
-def get_iedb_seq(iedb_file):
-	iedb_seq=[]
-	for line in open(iedb_file):
-		if line.startswith(">"):
-			continue
-		else:
-			iedb_seq.append(line.strip())
-	return iedb_seq
 def GetNmerPositivePep(n,mhc_pos_file):
 	pep_list=[]
 	for line in open(mhc_pos_file):
@@ -207,32 +193,7 @@ def get_hydro_model(mhc_pos_file,mhc_neg_file):
 	hy_xgb_11=xgb_11.fit(X_array_11,y_array_11)
 	return hy_xgb_9,hy_xgb_10,hy_xgb_11
 
-######T cell recognition
-def logSum(v):
-	ma=max(v)
-	return log(sum(map(lambda x: exp(x-ma),v)))+ma
 
-
-
-def calculate_R(neo_seq,iedb_seq):
-	align_score=[]
-	#i=0
-	for seq in iedb_seq:
-		aln_score=aligner(neo_seq,seq)
-		#i=i+1
-		#print i
-		#print aln_score
-		if aln_score!=[]:
-			localds_core=max([line[2] for line in aln_score])
-			align_score.append(localds_core)
-	#print align_score
-	#print k,a
-	bindingEnergies=map(lambda x: -k*(a-x),align_score)
-	#print bindingEnergies
-	lZk=logSum(bindingEnergies+[0])
-	lGb=logSum(bindingEnergies)
-	R=exp(lGb-lZk)
-	return R
 
 ############similarity############
 def aligner(seq1,seq2):
@@ -248,8 +209,8 @@ def cal_similarity_per(mut_seq,normal_seq):
 	score_self=aligner(mut_seq,mut_seq)[0][2]
 	per_similarity=score_pair/score_self
 	return per_similarity
-iedb_seq=get_iedb_seq('/home/zhouchi/database/Annotation/protein/iedb.fasta')
-hy_xgb_9,hy_xgb_10,hy_xgb_11=get_hydro_model('/home/zhouchi/database/Annotation/protein/all_postive.txt','/home/zhouchi/database/Annotation/protein/all_negative.txt')
+
+hy_xgb_9,hy_xgb_10,hy_xgb_11=get_hydro_model('./data/all_postive.txt','./data/all_negative.txt')
 
 fpkm=data_out.FPKM
 MT_peptide=data_out.MT_pep
@@ -266,7 +227,6 @@ wt_rank_score=list(data_out.WT_Binding_Aff.apply(f_rank_wt))
 immuno_score=[]
 for i in range(len(MT_peptide)):
 	s=1.0-cal_similarity_per(MT_peptide[i],WT_peptide[i])
-	#r=calculate_R(MT_peptide[i],iedb_seq)
 	e=data_out.editing_level[i]
 	pep_len=len(MT_peptide[i])
 	if pep_len==9:
