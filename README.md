@@ -21,6 +21,8 @@ Somatic A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted,
     
 
 ## Usage
+1. Make sure `NetMHCpan` and `vep` are in your executable path.
+2. Change `vep_cache` to your directory in `PREP.py` and Change `netchop_dir` to your directory in `bin/netCTLpan.py`.
 
 For detailed usage, use:
 
