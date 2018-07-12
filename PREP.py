@@ -210,7 +210,7 @@ def cal_similarity_per(mut_seq,normal_seq):
 	per_similarity=score_pair/score_self
 	return per_similarity
 
-hy_xgb_9,hy_xgb_10,hy_xgb_11=get_hydro_model('./data/all_postive.txt','./data/all_negative.txt')
+hy_xgb_9,hy_xgb_10,hy_xgb_11=get_hydro_model('./data/IEDB_postive.txt','./data/IEDB_negative.txt')
 
 fpkm=data_out.FPKM
 MT_peptide=data_out.MT_pep
