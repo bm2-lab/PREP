@@ -31,7 +31,7 @@ if (input_neo_file =="" or out_dir =="" or sample_id==""):
 	print USAGE
 	sys.exit(2)
 
-
+netchop_dir='/home/zhouchi/software/netchop/predict.py'
 data_neo_fil = pd.read_table(input_neo_file,header=0,sep='\t')
 if data_neo_fil.empty:
 	print "NetMHC filtering result is empty!!"
@@ -47,7 +47,7 @@ for hla,gene,aa,mt_pep in zip(data_neo_fil['HLA_type'],data_neo_fil.Gene,data_ne
     hla_type=hla.replace("*","")
     f=open(out_dir+'/'+sample_id+'_tmp.txt','w')
     f.write(line)
-    str_pro='python /home/zhouchi/software/netchop/predict.py --method netctlpan --allele ' + hla_type + ' --length ' +  str(pep_len)+ ' --threshold -99.9 --cleavage_weight 0.225 --tap_weight 0.025 --epitope_threshold 1.0 --noplot ' + out_dir+'/' + sample_id + '_tmp.txt' + ' >> '+ out_dir+'/'+sample_id+'_netCLT.txt'
+    str_pro='python ' + netchop_dir + ' --method netctlpan --allele ' + hla_type + ' --length ' +  str(pep_len)+ ' --threshold -99.9 --cleavage_weight 0.225 --tap_weight 0.025 --epitope_threshold 1.0 --noplot ' + out_dir+'/' + sample_id + '_tmp.txt' + ' >> '+ out_dir+'/'+sample_id+'_netCLT.txt'
     print str_pro
     f.close()
     subprocess.call(str_pro,shell = True,executable = '/bin/bash')
