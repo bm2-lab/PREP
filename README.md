@@ -19,10 +19,22 @@ Somatic A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted,
     pandas
     numpy
     
+### Install via Docker
+Docker image of PREP and a detailed description usage is at https://hub.docker.com/r/bm2lab/prep/.
+
+
+### Install from source
+1. Install all software and python package listed above.
+
+2. Download or clone the PREP repository to your local system:
+
+        git clone https://github.com/bm2-lab/PREP.git
+
+2. Change `NetMHCpan`, `vep`, `netchop` and `vep_cache` to your directory in `PREP.py`.
+
+
 
 ## Usage
-1. Make sure `NetMHCpan` and `vep` are in your executable path.
-2. Change `vep_cache` to your directory in `PREP.py` and Change `netchop_dir` to your directory in `bin/netCTLpan.py`.
 
 For detailed usage, use:
 
@@ -32,7 +44,7 @@ For detailed usage, use:
 
 To run the provided test files with PREP the following command can be run: 
 
-    python path/to/PREP.py -i test.vcf -o test -s test -a HLA-A02:01 -l 9 -e test.FPKM.txt -t test_editing_level.txt
+    python PREP.py -i example/example.vcf -o example -s example -a HLA-A02:01 -l 9 -e example_FPKM.txt -t example_editing_level.txt
     
 ## Contact   
 
@@ -45,3 +57,7 @@ qiliu@tongji.edu.cn
 Biological and Medical Big data Mining Lab  
 Tongji University    
 Shanghai, China. 
+
+## Neoantigen presentation illustration and algorithmic flow chart
+
+![](/doc/PREP_flow_chart.jpg)
