@@ -1,6 +1,6 @@
 # PREP: Prioritizing of RNA Editing-based Peptides
 
-Given somatic RNA-editing mutation as input, PREP identify and evaluate the potential immunogenicity of RNA editing based peptides. Detailed information please refer to citation.
+RNA editing is a source of transcriptomic diversity, mainly in non-coding regions, and is altered in cancer. Recent studies demonstrated that A-to-I RNA editing events are manifested at the proteomic level and contribute to protein heterogeneity in cancer. Given somatic RNA-editing mutation as input, PREP identify and evaluate the potential immunogenicity of RNA editing based peptides. Detailed information please refer to citation.
 
 #### Citation:
 Somatic A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted, 2018.
