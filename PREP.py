@@ -3,11 +3,9 @@ import numpy as np
 import sys,getopt,os
 import re
 import math
-from pyper import *
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
-from imblearn.under_sampling import RandomUnderSampler
 from Bio.Blast import NCBIXML
 from Bio import pairwise2
 from Bio.SubsMat import MatrixInfo as matlist
@@ -15,6 +13,8 @@ from math import log, exp
 import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier  
+from sklearn.externals import joblib
+
 #####prepare fasta format input file for netMHC######
 opts,args=getopt.getopt(sys.argv[1:],"hi:o:s:a:l:e:t:",["input_vcf_file","out_dir","sample_id","hla_allele","pep_len","exp_file_path","editing_level_file"])
 input_vcf_file =""
@@ -58,26 +58,37 @@ for opt,value in opts:
 if (input_vcf_file =="" or out_dir =="" or sample_id=="" or hla_allele==""):
 	print USAGE
 	sys.exit(2)
+
+##########change software path to your own directory###########
+#vep_cache='your/path/to/vep cache data'#'/home/zhouchi/database/Annotation/vep_data_89_37/'
+#vep_path='your/path/to/vep'
+#netMHCpan_path='your/path/to/netMHCpan'
+
 vep_cache='/home/zhouchi/database/Annotation/vep_data_89_37/'
-cmd_vep="vep -i " + input_vcf_file + " --cache --dir " + vep_cache + " --dir_cache " + vep_cache + " --force_overwrite --canonical --symbol -o STDOUT --offline | filter_vep --ontology --filter \"CANONICAL is YES and Consequence is missense_variant\" -o " + out_dir + '/' + sample_id +'_vep.txt' + " --force_overwrite"
-print cmd_vep
+vep_path='vep'
+netMHCpan_path='netMHCpan'
+netchop_path='/home/zhouchi/software/netchop'
+
+
+cmd_vep=vep_path + " -i " + input_vcf_file + " --cache --dir " + vep_cache + " --dir_cache " + vep_cache + " --force_overwrite --canonical --symbol -o STDOUT --offline | filter_vep --ontology --filter \"CANONICAL is YES and Consequence is missense_variant\" -o " + out_dir + '/' + sample_id +'_vep.tsv' + " --force_overwrite"
+print "Mutation annotation using VEP..."
 os.system(cmd_vep)
-cmd_edit="python bin/edit2fasta.py -i " + out_dir + "/" + sample_id +'_vep.txt' + " -o " + out_dir + " -s " + sample_id
-print cmd_edit
+cmd_edit="python bin/edit2fasta.py -i " + out_dir + "/" + sample_id +'_vep.tsv' + " -o " + out_dir + " -s " + sample_id
+print "Convert mutation to fasta..."
 os.system(cmd_edit)
 hla_str=hla_allele	
-cmd_netMHCpan="netMHCpan -a " + hla_str +  " -f " + out_dir + "/" + sample_id +'_edit.fasta' + " -l 9,10,11 -BA > " + out_dir + "/"  + sample_id +'_netmhc.txt'
-print cmd_netMHCpan
+cmd_netMHCpan=netMHCpan_path + " -a " + hla_str +  " -f " + out_dir + "/" + sample_id +'_edit.fasta' + " -l " + pep_len + " -BA > " + out_dir + "/"  + sample_id +'_netmhc.tsv'
+print "Neoantigen identification using netMHCpan..."
 os.system(cmd_netMHCpan)
-cmd_parse="python bin/sm_netMHC_result_parse.py -i " + out_dir + "/"  + sample_id +'_netmhc.txt' + " -g " + out_dir + "/"  + sample_id +'_edit.fasta' + ' -t ' + out_dir + "/" + sample_id +'_vep.txt' + " -o " + out_dir + " -s " + sample_id + " -e " + exp_file_path + " -a 1 -b 2 -f 0 -l " + hla_str
-print cmd_parse
+cmd_parse="python bin/sm_netMHC_result_parse.py -i " + out_dir + "/"  + sample_id +'_netmhc.tsv' + " -g " + out_dir + "/"  + sample_id +'_edit.fasta' + ' -t ' + out_dir + "/" + sample_id +'_vep.tsv' + " -o " + out_dir + " -s " + sample_id + " -e " + exp_file_path + " -a 1 -b 2 -f 0 -l " + hla_str
+print "Neoantigen extraction..."
 os.system(cmd_parse)
-cmd_netCTL="python bin/netCTLPAN.py -i " + out_dir + "/" + sample_id +"_final_neo_candidate.txt" + " -o " + out_dir + " -s " + sample_id
-print cmd_netCTL
+cmd_netCTL="python bin/netCTLPAN.py -i " + out_dir + "/" + sample_id +"_final_neo_candidate.tsv" + " -d " + "data/DriveGene.tsv " + " -o " + out_dir + " -s " + sample_id + " -n " + netchop_path
+print "Neoantigen annotation and ranking by immunogenicity score..."
 os.system(cmd_netCTL)
 
 data_level=pd.read_table(editing_level_file,header = 0, sep='\t')
-data_netclt=pd.read_table(out_dir + "/" + sample_id + "_netctl_concact.txt",header = 0, sep='\t')
+data_netclt=pd.read_table(out_dir + "/" + sample_id + "_netctl_concact.tsv",header = 0, sep='\t')
 data_out=pd.merge(data_netclt,data_level,left_on="#Position",right_on="POS",how="left")
 del data_out["POS"]
 #data_out.to_csv(out_dir + "/" + sample_id + "_neo.txt",header=1,index=0,sep='\t')
@@ -91,29 +102,6 @@ WEIRD_RESIDUES="CGP"
 hydro_score={"A":1.8,"C":2.5,"D":-3.5,"E":-3.5,"F":2.8,"G":-0.4,"H":-3.2,"I":4.5,"K":-3.9,"L":3.8,"M":1.9,"N":-3.5,"P":-1.6,"Q":-3.5,"R":-4.5,"S":-0.8,"T":-0.7,"V":4.2,"W":-0.9,"Y":-1.3,"X":0.0}
 
 
-def GetNmerPositivePep(n,mhc_pos_file):
-	pep_list=[]
-	for line in open(mhc_pos_file):
-		if line.startswith(">"):
-			continue
-		else:
-			record=line.strip()
-			if len(record)==n:
-				pep_list.append(record)
-	return pep_list
-
-
-def GetNmerNegativePep(n,mhc_neg_file):
-	pep_list=[]
-	for line in open(mhc_neg_file):
-		if line.startswith(">"):
-			continue
-		else:
-			record=line.strip()
-			if len(record)==n:
-				pep_list.append(record)
-	return pep_list
-
 def hydro_vector(pep):
 	hydrophobicity_vector=[]
 	pep_list=list(pep)
@@ -122,76 +110,6 @@ def hydro_vector(pep):
 		hydrophobicity_vector.append(hydro_score[pep.upper()])
 
 	return hydrophobicity_vector
-
-def getXY(n,mhc_pos_file,mhc_neg_file):
-	pos_pep=GetNmerPositivePep(n,mhc_pos_file)
-	neg_pep=GetNmerNegativePep(n,mhc_neg_file)
-	####get hydrophobicity list
-	pos_pep_hydro_list=[hydro_vector(p) for p in pos_pep]#[0:len(neg_pep_all)]
-	neg_pep_hydro_list=[hydro_vector(p) for p in neg_pep]
-	#print len(pos_pep_hydro_list)
-	#print len(neg_pep_hydro_list)
-	######transform into array
-	#pos_pep_hydro_array=np.array(pos_pep_hydro_list)
-	#neg_pep_hydro_array=np.array(neg_pep_hydro_list)
-	X=pos_pep_hydro_list+neg_pep_hydro_list
-	y=[1]*len(pos_pep_hydro_list)+[0]*len(neg_pep_hydro_list)
-	X_array=np.asarray(X)
-	y_array=np.asarray(y)
-	return X_array,y_array
-
-###get model
-def get_hydro_model(mhc_pos_file,mhc_neg_file):
-	xgb_9 = XGBClassifier(
-	 learning_rate =0.1,
-	 n_estimators=208,
-	 max_depth=5,
-	 min_child_weight=1,
-	 gamma=0,
-	 subsample=0.8,
-	 colsample_bytree=0.8,
-	 objective= 'binary:logistic',
-	 n_jobs=4,
-	 scale_pos_weight=1,
-	 random_state=27)
-	#[207]  train-auc:0.95222+0.000337282   test-auc:0.852987+0.00777271
-	#AUC Score (Train): 0.941597
-	#AUC Score (Test): 0.768922
-
-	xgb_10 = XGBClassifier(
-	 learning_rate =0.1,
-	 n_estimators=165,
-	 max_depth=16,
-	 min_child_weight=1,
-	 gamma=0,
-	 subsample=0.8,
-	 colsample_bytree=0.8,
-	 objective= 'binary:logistic',
-	 n_jobs=4,
-	 scale_pos_weight=1,
-	 random_state=27)
-	#[164]  train-auc:1+0   test-auc:0.900267+0.00955733
-	#AUC Score (Train): 1.000000
-	#AUC Score (Test): 0.802474
-	xgb_11 = XGBClassifier(
-	 learning_rate =0.1,
-	 n_estimators=123,
-	 max_depth=5,
-	 min_child_weight=1,
-	 gamma=0.1,
-	 subsample=0.8,
-	 colsample_bytree=0.8,
-	 objective= 'binary:logistic',
-	 n_jobs=4,
-	 scale_pos_weight=1,
-	 random_state=27)
-	X_array_9,y_array_9=getXY(9,mhc_pos_file,mhc_neg_file)
-	hy_xgb_9=xgb_9.fit(X_array_9,y_array_9)
-	X_array_10,y_array_10=getXY(10,mhc_pos_file,mhc_neg_file)
-	hy_xgb_10=xgb_10.fit(X_array_10,y_array_10)
-	X_array_11,y_array_11=getXY(11,mhc_pos_file,mhc_neg_file)
-	hy_xgb_11=xgb_11.fit(X_array_11,y_array_11)
-	return hy_xgb_9,hy_xgb_10,hy_xgb_11
 
 
 
@@ -210,8 +128,9 @@ def cal_similarity_per(mut_seq,normal_seq):
 	per_similarity=score_pair/score_self
 	return per_similarity
 
-hy_xgb_9,hy_xgb_10,hy_xgb_11=get_hydro_model('./data/IEDB_postive.txt','./data/IEDB_negative.txt')
-
+hy_xgb_9=joblib.load("model/cf_hy_9_model.m")
+hy_xgb_10=joblib.load("model/cf_hy_10_model.m")
+hy_xgb_11=joblib.load("model/cf_hy_11_model.m")
 fpkm=data_out.FPKM
 MT_peptide=data_out.MT_pep
 WT_peptide=data_out.WT_pep
@@ -239,4 +158,5 @@ for i in range(len(MT_peptide)):
 	immuno_score.append(score_i)
 data_out["immuno_score"]=immuno_score
 data_out_score=data_out.sort_values(["immuno_score"],ascending=[0])
-data_out_score.to_csv(out_dir + "/" + sample_id + "_neo_rank.txt",header=1,index=0,sep='\t')
+data_out_score.to_csv(out_dir + "/" + sample_id + "_neo_rank.tsv",header=1,index=0,sep='\t')
+print "All finished, check neo_rank.tsv for results!"

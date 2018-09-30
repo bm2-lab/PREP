@@ -13,9 +13,9 @@ Somatic A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted,
 * [NetChop](http://www.cbs.dtu.dk/services/NetChop/)
 
 #### Python package
-    XGboost
-    Bio
-    sklearn
+    xgboost
+    biopython
+    scikit-learn
     pandas
     numpy
     

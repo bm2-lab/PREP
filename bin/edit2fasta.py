@@ -33,7 +33,7 @@ if (input_snv_vep_file =="" or out_dir =="" or sample_id==""):
 
 
 transcript_aa={}
-for line in open("/home/zhouchi/database/Annotation/protein/Homo_sapiens.GRCh38.pep.all.fa",'r'):
+for line in open("data/Homo_sapiens.GRCh38.pep.all.fa",'r'):
 	if line.startswith(">"):
 		transcript_name = line.strip().split(' ')[4][11:26]
 		transcript_aa[transcript_name] = '' 

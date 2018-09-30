@@ -81,7 +81,7 @@ for line in data.strip().split('\n'):
 		Full_transcript.append(full_transcript)
 	else:
 		continue
-print len(Full_header),len(Full_gene)
+#print len(Full_header),len(Full_gene)
 dup_full_header=[]
 dup_full_gene=[]
 dup_full_cdna=[]
@@ -98,10 +98,6 @@ while i<hla_num:
 		dup_full_transcript.append(Full_transcript[j])
 	i=i+1
 
-print hla_num
-print Full_header
-print dup_full_header
-print len(dup_full_header),len(dup_full_gene)
 
 ######## extract candidate neoantigens####
 #print expression_fpkm_file
@@ -135,13 +131,12 @@ gene_record=[]
 cdna_record=[]
 chrom_pos_record=[]
 transcript_name_record=[]
-print len(MT_neo),len(WT_neo)
+
 
 
 for i in range(len(MT_neo)):
 	for j in range(len(MT_neo[i])):
 		if MT_neo[i][j].endswith('WB') or MT_neo[i][j].endswith('SB'):
-			print i,j
 			aa_record.append(dup_full_header[i])
 			gene_record.append(dup_full_gene[i])
 			#print dup_full_gene[i]
@@ -203,7 +198,6 @@ data_gene_ensg=pd.DataFrame()
 data_gene_ensg["Gene"]=gene_symbol
 data_gene_ensg["ENSG_ID"]=gene_ensembl
 data_neo_ensg=pd.merge(data_neo,data_gene_ensg,left_on="Gene",right_on="Gene",how='left')
-print expression_fpkm_file
 
 if expression_fpkm_file=='no_exp':
 	print "You did not provide expression file, the expression filter will not be done."
@@ -223,8 +217,7 @@ else:
 #print final_filter_data
 final_filter_data_aa_change=final_filter_data[final_filter_data.MT_pep!=final_filter_data.WT_pep]
 #final_filter_data_specific=final_filter_data_aa_change[(final_filter_data_aa_change.MT_Binding_Aff<=2) & (final_filter_data_aa_change.WT_Binding_Aff>2)]
-final_filter_data_aa_change.to_csv(out_dir+'/'+sample_id+"_final_neo_candidate.txt",header=1,sep='\t',index=0)
-print expression_fpkm_file
+final_filter_data_aa_change.to_csv(out_dir+'/'+sample_id+"_final_neo_candidate.tsv",header=1,sep='\t',index=0)
     
 
 
