@@ -5,12 +5,11 @@ import sys,getopt,os
 import pandas as pd 
 
 
-opts,args=getopt.getopt(sys.argv[1:],"hi:g:e:o:t:b:a:f:s:l:",["input_netmhc_file","input_fasta","expression_fpkm_file","out_dir","snv_vep_all","binding_affinity_cutoff","binding_affinity_foldchange_cutoff","fpkm_cutoff","sample_id","hla_str"])
+opts,args=getopt.getopt(sys.argv[1:],"hi:g:e:o:b:a:f:s:l:",["input_netmhc_file","input_fasta","expression_fpkm_file","out_dir","binding_affinity_cutoff","binding_affinity_foldchange_cutoff","fpkm_cutoff","sample_id","hla_str"])
 input_netmhc_file=""
 input_fasta=""
 expression_fpkm_file=""
 out_dir=""
-snv_vep_all=""
 binding_affinity_cutoff=500
 binding_affinity_foldchange_cutoff=1
 fpkm_cutoff=1
@@ -21,7 +20,6 @@ USAGE='''usage: python netMHC_result_parse.py -i <input_netmhc_file> -g <input_f
 			-i | --input_netmhc_file : input file,result from netMHC
 			-g | --input_fasta : input fasta file for netMHC
 			-o | --out_dir : output directory
-			-t | --snv_vep_all : vep result of all transcript
 			-s | --sample_id : sample id
 		optional argument:
 			-e | --expression_fpkm_file : expression profile with fpkm value
@@ -41,9 +39,7 @@ for opt,value in opts:
 	elif opt in ("-e","--expression_fpkm_file"):
 		expression_fpkm_file =value
 	elif opt in ("-o","--out_dir"):
-		out_dir =value 
-	elif opt in ("-t","--snv_vep_all"):
-		snv_vep_all =value   
+		out_dir =value  
 	elif opt in ("-b","--binding_affinity_cutoff"):
 		binding_affinity_cutoff =value
 	elif opt in ("-a","--binding_affinity_foldchange_cutoff"):
@@ -57,8 +53,7 @@ for opt,value in opts:
 #print coverage
 if (input_netmhc_file =="" or input_fasta =="" or out_dir =="" or sample_id=="" or hla_str==""):
 	print USAGE
-	sys.exit(2)	
-
+	sys.exit(2)		
 #######extract full animo acid change##
 Full_header=[]
 Full_gene=[]
@@ -137,6 +132,7 @@ transcript_name_record=[]
 for i in range(len(MT_neo)):
 	for j in range(len(MT_neo[i])):
 		if MT_neo[i][j].endswith('WB') or MT_neo[i][j].endswith('SB'):
+			#print i,j
 			aa_record.append(dup_full_header[i])
 			gene_record.append(dup_full_gene[i])
 			#print dup_full_gene[i]
@@ -146,7 +142,7 @@ for i in range(len(MT_neo)):
 			WB_SB_MT_record.append(MT_neo[i][j])
 			WT_record.append(WT_neo[i][j])
 
-candidate_neo = open(out_dir+'/'+sample_id+"_tmp_neo_candidate.txt",'w')
+candidate_neo = open(out_dir+'/'+sample_id+"_tmp_neo_candidate.tsv",'w')
 candidate_neo.write('\t'.join(['#Position','HLA_type','Gene','Transcript_name','Mutation','AA_change','MT_pep','WT_pep','MT_Binding_Aff','WT_Binding_Aff','MT_Binding_level_des','WT_Binding_level_des','fold_change']) + '\n')
 for i in range(len(WB_SB_MT_record)):
     mt_record = [line for line in WB_SB_MT_record[i].split(' ') if line!='']
@@ -177,47 +173,24 @@ f=lambda x: x.split('.')[0]
 
 ######neoantigens filtering#####
 ##including Binding affinity ,localized peptide, multiple length peptide screen, differential AI> ##, neoantigens stability, gene FPKM>1 #####
-data_neo=pd.read_table(out_dir+'/'+sample_id+"_tmp_neo_candidate.txt",header=0,sep='\t')
-gene_symbol=[]
-gene_ensembl=[]
-for ele in open(snv_vep_all):
-	if ele.startswith('#'):
-		continue
-	else:
-		ensg_id=ele.strip().split('\t')[3]
-		extra=ele.strip().split('\t')[-1]
-		#vep_gene=extra.split(';')[2].split('=')[1]
-		element=extra.split(';')
-		for ele in element:
-			sub_ele=ele.split('=')
-			if sub_ele[0]=="SYMBOL":
-				vep_gene=sub_ele[1]		
-		gene_ensembl.append(ensg_id)
-		gene_symbol.append(vep_gene)
-data_gene_ensg=pd.DataFrame()
-data_gene_ensg["Gene"]=gene_symbol
-data_gene_ensg["ENSG_ID"]=gene_ensembl
-data_neo_ensg=pd.merge(data_neo,data_gene_ensg,left_on="Gene",right_on="Gene",how='left')
-
+data=pd.read_table(out_dir+'/'+sample_id+"_tmp_neo_candidate.tsv",header=0,sep='\t')
 if expression_fpkm_file=='no_exp':
 	print "You did not provide expression file, the expression filter will not be done."
-	final_filter_data=data_neo_ensg[(data_neo_ensg.MT_Binding_Aff<int(binding_affinity_cutoff))] 
+	final_filter_data=data[(data.MT_Binding_Aff<int(binding_affinity_cutoff))] 
 elif os.path.exists(expression_fpkm_file):
-	first_filter_data=data_neo_ensg[(data_neo_ensg.MT_Binding_Aff<int(binding_affinity_cutoff))]
-	exp = pd.read_table(expression_fpkm_file,header=-1,sep='\t')
-	exp.columns = "Ensembl_ID","FPKM"
-	exp["Ensembl_ID"]=exp.Ensembl_ID.apply(f)
-	data_final_merger=pd.merge(data_neo_ensg,exp,left_on='ENSG_ID',right_on='Ensembl_ID',how='left')
+	first_filter_data=data[(data.MT_Binding_Aff<int(binding_affinity_cutoff))]
+	exp = pd.read_table(expression_fpkm_file,header=0,sep='\t')
+	gene_exp = exp.loc[:,['Gene Name','TPM']]
+	neo_merge_exp = pd.merge(first_filter_data,gene_exp,left_on='Gene',right_on='Gene Name',how='left')
 	#print neo_merge_exp
-	final_filter_data=data_final_merger[data_final_merger.FPKM>float(fpkm_cutoff)]
+	final_filter_data=neo_merge_exp[neo_merge_exp.TPM>float(fpkm_cutoff)]
 else:
 	print "could not find expresion file,check if the file exists!"
 	sys.exit(2)
 #os.remove(out_dir+'/'+sample_id+"_tmp_neo_candidate.txt")
 #print final_filter_data
-final_filter_data_aa_change=final_filter_data[final_filter_data.MT_pep!=final_filter_data.WT_pep]
-#final_filter_data_specific=final_filter_data_aa_change[(final_filter_data_aa_change.MT_Binding_Aff<=2) & (final_filter_data_aa_change.WT_Binding_Aff>2)]
-final_filter_data_aa_change.to_csv(out_dir+'/'+sample_id+"_final_neo_candidate.tsv",header=1,sep='\t',index=0)
+final_filter_data.to_csv(out_dir+'/'+sample_id+"_final_neo_candidate.tsv",header=1,sep='\t',index=0)
+
     
 
 

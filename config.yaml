@@ -1,0 +1,10 @@
+tumor_rna_fastq_1: /home/zhouchi/rnaeditor_bam/cell_line/HPA_normal/ERR315460/ERR315460_clean_1P.fastq
+tumor_rna_fastq_2: /home/zhouchi/rnaeditor_bam/cell_line/HPA_normal/ERR315460/ERR315460_clean_2P.fastq
+output_fold: test1
+sample_name: test1
+thread_number: 16
+##### specify other software excutable path in your system as you have installed them.
+opitype_fold: /home/zhouchi/software/OptiType/OptiTypePipeline.py
+vep_cache_path: /home/zhouchi/database/Annotation/vep_data/
+vep_path: /usr/local/ensembl-vep/
+netMHCpan_path: /home/zhouchi/bin/netMHCpan

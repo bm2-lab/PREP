@@ -101,6 +101,8 @@ del data_has_change_aa['index']
 data_has_change_aa["contain_X"]=['X' not in data_has_change_aa.MT_pep[i] for i in range(len(data_has_change_aa.MT_pep))]
 data_out=data_has_change_aa[data_has_change_aa.contain_X==True]
 data_out.fillna(0.5)
+del data_out["Gene Name"]
+del data_out["contain_X"]
 data_out.to_csv(out_dir+'/'+sample_id+'_netctl_concact.tsv',sep='\t',header=1,index=0)	 
 if os.path.exists(out_dir+'/'+sample_id+'_tmp.txt'):    
 	os.remove(out_dir+'/'+sample_id+'_tmp.txt')
