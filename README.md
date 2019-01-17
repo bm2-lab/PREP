@@ -33,7 +33,7 @@ A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted, 2018.
 
 ## Usage
 
-To run PREP, first fill the RNA-seq squeunce file path in `confg.yaml`, then use:
+To run PREP, first fill file path of you rna-seq FASTQ file in `confg.yaml`, then use:
 
     python PREP.py RE -i config.yaml
     
