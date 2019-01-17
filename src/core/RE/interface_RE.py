@@ -53,7 +53,6 @@ def RNAEditing(opts):
 	editing_gvf_file=alignment_out_fold+"/"+prefix+".editingSites.gvf"
 	neo_file=alignment_out_fold+"/"+prefix+"_netctl_concact.tsv"
 	final_neo_file=alignment_out_fold+"/"+prefix+"_final_neoantigen.tsv"
-	#netchop_path="/home/zhouchi/iTunes/software/netchop"
 	rnaeditor_path="software/RNAEditor/"
 	time.sleep(1)
 	print "Read and parse parameters done..."
@@ -134,7 +133,7 @@ def RNAEditing(opts):
 	processes_0=[]
 	if MODE=="PE":
 		q1=multiprocessing.Process(target=read_trimmomatic_PE,args=(rna_fastq_1_path,rna_fastq_2_path,trimmomatic_path,adapter_path_PE,tumor_fastq_prefix,logfile_out_fold,CPU,))
-		#processes_0.append(q1)
+		processes_0.append(q1)
 	elif MODE=="SE":
 		q1=multiprocessing.Process(target=read_trimmomatic_SE,args=(rna_fastq_1_path,trimmomatic_path,adapter_path_SE,tumor_fastq_prefix,logfile_out_fold,CPU,))
 		processes_0.append(q1)		
@@ -147,9 +146,9 @@ def RNAEditing(opts):
 	processes_1=[]
 	if MODE=="PE":
 		h1=multiprocessing.Process(target=mapping_PE,args=(tumor_fastq_clean_1,tumor_fastq_clean_2,CPU,alignment_out_fold,prefix,star_path,star_index_path,stringtie_path,gtf_path,java_picard_path,GATK_path,REFERENCE,indels,rnaeditor_path,))
-		#processes_1.append(h1)
+		processes_1.append(h1)
 		h2=multiprocessing.Process(target=hlatyping_pe,args=(rna_fastq_1_path,rna_fastq_2_path,opitype_fold,opitype_out_fold,opitype_ext,prefix,))
-		#processes_1.append(h2)
+		processes_1.append(h2)
 	elif MODE=="SE":
 		h1=multiprocessing.Process(target=mapping_SE,args=(tumor_fastq_clean_1,CPU,alignment_out_fold,prefix,star_path,star_index_path,stringtie_path,gtf_path,java_picard_path,GATK_path,REFERENCE,indels,rnaeditor_path,))
 		processes_1.append(h1)

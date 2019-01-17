@@ -1,10 +1,10 @@
 #!/bin/bash
 # download and process databse file 
 echo "download reference file"
-#mkdir database && cd database
+mkdir database && cd database
 cd database
-#wget http://141.2.194.197/rnaeditor_annotations/GRCH38.tar.gz
-#tar xvzf GRCH38.tar.gz
+wget http://141.2.194.197/rnaeditor_annotations/GRCH38.tar.gz
+tar xvzf GRCH38.tar.gz && rm -f GRCH38.tar.gz
 cd GRCH38 && mv ESP_filtered ESP.vcf
 mkdir STAR_index
 ../../software/STAR --runMode genomeGenerate --genomeDir STAR_index --genomeFastaFiles Homo_sapiens.GRCh38.dna.primary_assembly.fa --runThreadN 8

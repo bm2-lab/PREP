@@ -1,50 +1,18 @@
 import os,sys,time
 import multiprocessing
-import shutil 
 import subprocess
 import pandas as pd
-import math
-from pyper import *
 import numpy as np
-import math
 from sklearn import preprocessing
-from sklearn.decomposition import PCA
-from matplotlib import pyplot as plt
-from sklearn.semi_supervised import label_propagation
-import itertools
-from scipy import linalg
-import matplotlib as mpl
-from sklearn import mixture
-from sklearn.preprocessing import StandardScaler
-from sklearn.neural_network import MLPClassifier
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.metrics import classification_report_imbalanced
 from Bio.Blast import NCBIXML
 from Bio import pairwise2
 from Bio.SubsMat import MatrixInfo as matlist
 from math import log, exp
-import pandas as pd
 import math	
-import numpy as np
 from scipy import interp
-from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import StratifiedKFold
 import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
-from sklearn import metrics
-from sklearn.model_selection import GridSearchCV
-import matplotlib.pylab as plt
-from sklearn.model_selection import train_test_split
-from Bio.Blast import NCBIXML
-from Bio import pairwise2
-from Bio.SubsMat import MatrixInfo as matlist
-from math import log, exp
-import subprocess
-from sklearn.ensemble import RandomForestClassifier  
-from sklearn.preprocessing import StandardScaler
-from imblearn.over_sampling import SMOTE
 from collections import Counter
-from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
 
 a=26
@@ -106,88 +74,88 @@ def hlatyping_se(raw_fastq_path_first,opitype_fold,opitype_out_fold,opitype_ext,
 
 def mapping_PE(fastq_1_path,fastq_2_path,CPU,alignment_out_fold,prefix,star_path,star_index,stringtie_path,gtf_path,picard_path,gatk_path,reference,indels,rnaeditor_path):
 	cmd_star="{} --twopassMode Basic --genomeDir {} --runThreadN {} --outSAMtype BAM SortedByCoordinate --twopass1readsN -1 --sjdbOverhang 99 --readFilesIn {} {} --outSAMattrRGline ID:RG_{} SM:{} PL:ILLUMINA --limitBAMsortRAM 60000000000 --outFileNamePrefix {}".format(star_path,star_index,CPU,fastq_1_path,fastq_2_path,prefix,prefix,alignment_out_fold+'/'+prefix)
-	print cmd_star
-	#os.system(cmd_star)
+	#print cmd_star
+	os.system(cmd_star)
 	cmd_stringtie="{} -G {} -A {}_exp.gtf -o {}.gtf {}Aligned.sortedByCoord.out.bam".format(stringtie_path,gtf_path,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_stringtie
-	#os.system(cmd_stringtie)
+	#print cmd_stringtie
+	os.system(cmd_stringtie)
 	cmd_mkdup="java -jar {} MarkDuplicates I={}Aligned.sortedByCoord.out.bam O={}_markdup.bam CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M={}.metrics".format(picard_path,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_mkdup
-	#os.system(cmd_mkdup)
+	#print cmd_mkdup
+	os.system(cmd_mkdup)
 	cmd_splitjunc="java -jar {} -T SplitNCigarReads -R {} -I {}_markdup.bam -o {}_splitted.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS".format(gatk_path,reference,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_splitjunc
-	#os.system(cmd_splitjunc)
+	#print cmd_splitjunc
+	os.system(cmd_splitjunc)
 	cmd_RTC="java -jar {} -T RealignerTargetCreator -R {} -I {}_splitted.bam --known {} -o {}.intervalListFromRTC.intervals".format(gatk_path,reference,alignment_out_fold+'/'+prefix,indels,alignment_out_fold+'/'+prefix)
-	print cmd_RTC
-	#os.system(cmd_RTC)		
+	#print cmd_RTC
+	os.system(cmd_RTC)		
 	cmd_indelrealign="java -jar {} -T IndelRealigner -R {} -I {}_splitted.bam -o {}_realigned.bam -known {} -targetIntervals {}.intervalListFromRTC.intervals".format(gatk_path,reference,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,indels,alignment_out_fold+'/'+prefix)
-	print cmd_indelrealign
-	#os.system(cmd_indelrealign)
+	#print cmd_indelrealign
+	os.system(cmd_indelrealign)
 	cmd_rename_bam="mv {}_realigned.bam {}.noDup.realigned.recalibrated.bam".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
 	cmd_rename_bai="mv {}_realigned.bai {}.noDup.realigned.recalibrated.bai".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_rename_bam
-	#os.system(cmd_rename_bam)
-	#os.system(cmd_rename_bai)
+	#print cmd_rename_bam
+	os.system(cmd_rename_bam)
+	os.system(cmd_rename_bai)
 	cmd_chcon="sed '11c output = {}' {}configuration.txt > {}configuration_new.txt".format(alignment_out_fold+'/'+prefix,rnaeditor_path,rnaeditor_path)
-	print cmd_chcon
+	#print cmd_chcon
 	os.system(cmd_chcon)
 	cmd_rnaeditor="python {}RNAEditor.py -i {}.noDup.realigned.recalibrated.bam -c {}configuration_new.txt".format(rnaeditor_path,alignment_out_fold+'/'+prefix,rnaeditor_path)
-	print cmd_rnaeditor
+	#print cmd_rnaeditor
 	os.system(cmd_rnaeditor)
 
 def mapping_SE(fastq_1_path,CPU,alignment_out_fold,prefix,star_path,star_index,stringtie_path,gtf_path,picard_path,gatk_path,reference,indels,rnaeditor_path):
 	cmd_star="{} --twopassMode Basic --genomeDir {} --runThreadN {} --outSAMtype BAM SortedByCoordinate --twopass1readsN -1 --sjdbOverhang 99 --readFilesIn {} {} --outSAMattrRGline ID:RG_{} SM:{} PL:ILLUMINA --limitBAMsortRAM 60000000000 --outFileNamePrefix {}".format(star_path,star_index,CPU,fastq_1_path,prefix,prefix,alignment_out_fold+'/'+prefix)
-	print cmd_star
+	#print cmd_star
 	os.system(cmd_star)
 	cmd_stringtie="{} -G {} -A {}_exp.gtf -o {}.gtf {}Aligned.sortedByCoord.out.bam".format(stringtie_path,gtf_path,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_stringtie
+	#print cmd_stringtie
 	os.system(cmd_stringtie)
 	cmd_mkdup="java -jar {} MarkDuplicates I={}Aligned.sortedByCoord.out.bam O={}_markdup.bam CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M={}.metrics".format(picard_path,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_mkdup
-	#os.system(cmd_mkdup)
+	#print cmd_mkdup
+	os.system(cmd_mkdup)
 	cmd_splitjunc="java -jar {} -T SplitNCigarReads -R {} -I {}_markdup.bam -o {}_splitted.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS".format(gatk_path,reference,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_splitjunc
-	#os.system(cmd_splitjunc)
+	#print cmd_splitjunc
+	os.system(cmd_splitjunc)
 	cmd_RTC="java -jar {} -T RealignerTargetCreator -R {} -I {}_splitted.bam --known {} -o {}.intervalListFromRTC.intervals".format(gatk_path,reference,alignment_out_fold+'/'+prefix,indels,alignment_out_fold+'/'+prefix)
-	print cmd_RTC
-	#os.system(cmd_RTC)		
+	#print cmd_RTC
+	os.system(cmd_RTC)		
 	cmd_indelrealign="java -jar {} -T IndelRealigner -R {} -I {}_splitted.bam -o {}_realigned.bam -known {} -targetIntervals {}.intervalListFromRTC.intervals".format(gatk_path,reference,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,indels,alignment_out_fold+'/'+prefix)
-	print cmd_indelrealign
-	#os.system(cmd_indelrealign)
+	#print cmd_indelrealign
+	os.system(cmd_indelrealign)
 	cmd_rename_bam="mv {}_realigned.bam {}.noDup.realigned.recalibrated.bam".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
 	cmd_rename_bai="mv {}_realigned.bai {}.noDup.realigned.recalibrated.bai".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_rename_bam
-	#os.system(cmd_rename_bam)
-	#os.system(cmd_rename_bai)
-	#cmd_chcon="sed '11c output = {}' {}configuration.txt > {}configuration_new.txt".format(alignment_out_fold+'/'+prefix,rnaeditor_path,rnaeditor_path)
+	#print cmd_rename_bam
+	os.system(cmd_rename_bam)
+	os.system(cmd_rename_bai)
+	cmd_chcon="sed '11c output = {}' {}configuration.txt > {}configuration_new.txt".format(alignment_out_fold+'/'+prefix,rnaeditor_path,rnaeditor_path)
 	#print cmd_chcon
-	#os.system(cmd_chcon)
+	os.system(cmd_chcon)
 	cmd_rnaeditor="python {}RNAEditor.py -i {}.noDup.realigned.recalibrated.bam -c {}configuration_new.txt".format(rnaeditor_path,alignment_out_fold+'/'+prefix,rnaeditor_path)
-	print cmd_rnaeditor
-	#os.system(cmd_rnaeditor)
+	#print cmd_rnaeditor
+	os.system(cmd_rnaeditor)
 
 
 def neo_detection(alignment_out_fold,prefix,vep_path,vep_cache,human_peptide_path,netmhcpan_path,hla_str,netchop_path):
 	cmd_coding="grep -w \"coding-exon\" {}.editingSites.vcf | awk -F \'\\t\' '{{print \"chr\"$0}}' - > {}.CodingeditingSites_chr.vcf".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_coding
+	#print cmd_coding
 	os.system(cmd_coding)
 	cmd_filter_normal="python bin/editing_site_filtering.py {}.CodingeditingSites_chr.vcf {}.CodingeditingSites_chr_filter.vcf".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
-	print cmd_filter_normal
+	#print cmd_filter_normal
 	os.system(cmd_filter_normal)
 	cmd_vep="{}vep -i {}.CodingeditingSites_chr_filter.vcf --cache --dir {} --dir_cache {} --force_overwrite --canonical --symbol -o STDOUT --offline | {}filter_vep --ontology --filter 'Consequence is missense_variant' -o {}.vep.txt --force_overwrite".format(vep_path,alignment_out_fold+'/'+prefix,vep_cache,vep_cache,vep_path,alignment_out_fold+'/'+prefix)
-	print cmd_vep
+	#print cmd_vep
 	os.system(cmd_vep)
 	cmd_gene_fasta="python bin/snv2fasta.py -i {}.vep.txt -o {} -s {} -p {}".format(alignment_out_fold+'/'+prefix,alignment_out_fold,prefix,human_peptide_path)
-	print cmd_gene_fasta
+	#print cmd_gene_fasta
 	os.system(cmd_gene_fasta)
 	cmd_netmhcpan="{} -f {}_snv.fasta -a {} -l 9,10,11 -BA > {}_nemhc.txt".format(netmhcpan_path,alignment_out_fold+'/'+prefix,hla_str,alignment_out_fold+'/'+prefix)
-	print cmd_netmhcpan
+	#print cmd_netmhcpan
 	os.system(cmd_netmhcpan)
 	cmd_netmhcpan_parse="python bin/sm_netMHC_result_parse.py -i {}_nemhc.txt -g {}_snv.fasta -o {} -s {} -l {} -e {}_exp.gtf".format(alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold,prefix,hla_str,alignment_out_fold+'/'+prefix)
-	print cmd_netmhcpan_parse
+	#print cmd_netmhcpan_parse
 	os.system(cmd_netmhcpan_parse)
 	cmd_netchop="python bin/netCTLPAN.py -i {}_final_neo_candidate.tsv -o {} -d software/DriveGene.tsv -s {} -n {}".format(alignment_out_fold+'/'+prefix,alignment_out_fold,prefix,netchop_path)
-	print cmd_netchop
+	#print cmd_netchop
 	os.system(cmd_netchop)
 
 
