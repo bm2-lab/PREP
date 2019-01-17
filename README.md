@@ -3,14 +3,14 @@
 RNA editing is a source of transcriptomic diversity, mainly in non-coding regions, and is altered in cancer. Recent studies demonstrated that A-to-I RNA editing events are manifested at the proteomic level and contribute to protein heterogeneity in cancer. Given somatic RNA-editing mutation as input, PREP identify and evaluate the potential immunogenicity of RNA editing based peptides. Detailed information please refer to citation.
 
 #### Citation:
-Somatic A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted, 2018.
+A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted, 2018.
 
 ## Dependencies  
 
 #### Required software:
 * [NetMHCpan 4.0](http://www.cbs.dtu.dk/cgi-bin/nph-sw_request?netMHCpan)
 * [Variant Effect Predictor](https://github.com/Ensembl/ensembl-vep)
-* [NetChop](http://www.cbs.dtu.dk/services/NetChop/)
+* [OptiType](https://github.com/FRED-2/OptiType)
 
 #### Python package
     xgboost
@@ -18,9 +18,6 @@ Somatic A-to-I RNA Editing Generates Potential Neoantigens in Cancer, Submitted,
     scikit-learn
     pandas
     numpy
-    
-### Install via Docker
-Docker image of PREP and a detailed description usage is at https://hub.docker.com/r/bm2lab/prep/.
 
 
 ### Install from source
@@ -30,21 +27,15 @@ Docker image of PREP and a detailed description usage is at https://hub.docker.c
 
         git clone https://github.com/bm2-lab/PREP.git
 
-2. Change `NetMHCpan`, `vep`, `netchop` and `vep_cache` to your directory in `PREP.py`.
+2. Change `NetMHCpan`, `vep`, `netchop` and `vep_cache` to your directory in `config.yaml`.
 
 
 
 ## Usage
 
-For detailed usage, use:
+To run PREP, first fill the RNA-seq squeunce file path in `confg.yaml`, then use:
 
-    python path/to/PREP.py -h
-
-## Test example
-
-To run the provided test files with PREP the following command can be run: 
-
-    python PREP.py -i example/example.vcf -o example -s example -a HLA-A02:01 -l 9 -e example_FPKM.txt -t example_editing_level.txt
+    python PREP.py RE -i config.yaml
     
 ## Contact   
 
