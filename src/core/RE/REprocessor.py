@@ -3,16 +3,13 @@ import multiprocessing
 import subprocess
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing
 from Bio.Blast import NCBIXML
 from Bio import pairwise2
 from Bio.SubsMat import MatrixInfo as matlist
 from math import log, exp
-import math	
-from scipy import interp
 import xgboost as xgb
+import math
 from xgboost.sklearn import XGBClassifier
-from collections import Counter
 from sklearn.externals import joblib
 
 a=26
@@ -31,19 +28,19 @@ def get_iedb_seq(iedb_file):
 		else:
 			iedb_seq.append(line.strip())
 	return iedb_seq
-def read_trimmomatic_PE(raw_fastq_path_first,raw_fastq_path_second,trimmomatic_path,adapter_path,fastq_prefix,logfile_fold,CPU):
-	cmd_trimmomatic="java -jar " + trimmomatic_path + " PE -phred33 -threads " + str(CPU) + ' ' + raw_fastq_path_first + ' ' + raw_fastq_path_second  + ' -baseout ' + fastq_prefix + " ILLUMINACLIP:" + adapter_path + ':2:30:10' + ' LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 > ' + logfile_fold + '/' + 'trimmomatic.log' + ' 2>&1'
+def read_trimmomatic_PE(raw_fastq_path_first,raw_fastq_path_second,trimmomatic_path,adapter_path_PE,fastq_prefix,logfile_fold,CPU):
+	cmd_trimmomatic="java -jar " + trimmomatic_path + " PE -phred33 -threads " + str(CPU) + ' ' + raw_fastq_path_first + ' ' + raw_fastq_path_second  + ' -baseout ' + fastq_prefix + " ILLUMINACLIP:" + adapter_path_PE + ':2:30:10' + ' LEADING:20 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:20 > ' + logfile_fold + '/' + 'trimmomatic.log' + ' 2>&1'
 	#print cmd_trimmomatic
 	os.system(cmd_trimmomatic)
 
-def read_trimmomatic_SE(raw_fastq_path_first,trimmomatic_path,adapter_path,fastq_prefix,logfile_fold,CPU):
-	cmd_trimmomatic="java -jar " + trimmomatic_path + " SE -phred33 -threads " + str(CPU) + ' ' + raw_fastq_path_first + ' -baseout ' + fastq_prefix + " ILLUMINACLIP:" + adapter_path + ':2:30:10' + ' LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 > ' + logfile_fold + '/' + 'trimmomatic.log' + ' 2>&1'
+def read_trimmomatic_SE(raw_fastq_path_first,trimmomatic_path,adapter_path_SE,fastq_prefix,logfile_fold,CPU):
+	cmd_trimmomatic="java -jar " + trimmomatic_path + " SE -phred33 -threads " + str(CPU) + ' ' + raw_fastq_path_first + ' ' + fastq_prefix + " ILLUMINACLIP:" + adapter_path_SE + ':2:30:10' + ' LEADING:20 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:20 > ' + logfile_fold + '/' + 'trimmomatic.log' + ' 2>&1'
 	#print cmd_trimmomatic
 	os.system(cmd_trimmomatic)
 
 
 def hlatyping_pe(raw_fastq_path_first,raw_fastq_path_second,opitype_fold,opitype_out_fold,opitype_ext,prefix):
-	cmd_hla = 'python ' + opitype_fold + ' -i ' + raw_fastq_path_first + ' ' + raw_fastq_path_second + ' --rna -o ' + opitype_out_fold
+	cmd_hla = 'python ' + opitype_fold + 'OptiTypePipeline.py -i ' + raw_fastq_path_first + ' ' + raw_fastq_path_second + ' --rna -o ' + opitype_out_fold
 	#print cmd_hla
 	os.system(cmd_hla)
 	result_dir=os.listdir(opitype_out_fold)
@@ -54,9 +51,10 @@ def hlatyping_pe(raw_fastq_path_first,raw_fastq_path_second,opitype_fold,opitype
 	#print cmd_hla_ext
 	os.system(cmd_hla_ext)
 	print 'hla type process done.'
+
 
 def hlatyping_se(raw_fastq_path_first,opitype_fold,opitype_out_fold,opitype_ext,prefix):
-	cmd_hla = 'python ' + opitype_fold + ' -i ' + raw_fastq_path_first + ' --rna -o ' + opitype_out_fold
+	cmd_hla = 'python ' + opitype_fold + 'OptiTypePipeline.py -i ' + raw_fastq_path_first + ' --rna -o ' + opitype_out_fold
 	#print cmd_hla
 	os.system(cmd_hla)
 	result_dir=os.listdir(opitype_out_fold)
@@ -67,7 +65,29 @@ def hlatyping_se(raw_fastq_path_first,opitype_fold,opitype_out_fold,opitype_ext,
 	#print cmd_hla_ext
 	os.system(cmd_hla_ext)
 	print 'hla type process done.'
-
+'''
+def hlatyping_se(raw_fastq_path_first,opitype_fold,opitype_out_fold,opitype_ext,prefix,razer_path,samtools_path):
+	#cmd_razers="{} -i 95 -m 1 -dr 0 -tc 8 -o {}/finished.bam {}data/hla_reference_rna.fasta {}".format(razer_path,opitype_out_fold,opitype_fold,raw_fastq_path_first)
+	#print cmd_razers
+	#os.system(cmd_razers)
+	#cmd_bam2fq="{} bam2fq {}/fished_1.bam > {}_fished.fastq".format(samtools_path,opitype_out_fold,opitype_out_fold+'/'+prefix)
+	#print cmd_bam2fq
+	#os.system(cmd_bam2fq)
+	cmd_hla = 'python ' + opitype_fold + 'OptiTypePipeline.py -i ' + opitype_out_fold + '/' + prefix + "_fished.fastq" + ' --rna -o ' + opitype_out_fold
+	#print cmd_hla
+	#os.system(cmd_hla)
+	cmd_rmbam="rm {}/fished_1.bam {}_fished.fastq".format(opitype_out_fold,opitype_out_fold)
+	print cmd_rmbam
+	#os.system(cmd_rmbam)
+	#result_dir=os.listdir(opitype_out_fold)
+	#print result_dir[0]
+	#hla_result_path=opitype_out_fold+'/'+result_dir[0]+'/'+result_dir[0]+'_result.tsv'
+	#print hla_result_path
+	#cmd_hla_ext = 'python ' + opitype_ext + ' -i ' + hla_result_path + ' -o ' + opitype_out_fold + ' -s ' + prefix
+	#print cmd_hla_ext
+	#os.system(cmd_hla_ext)
+	print 'hla type process done.'
+'''
 
 
 
@@ -104,7 +124,7 @@ def mapping_PE(fastq_1_path,fastq_2_path,CPU,alignment_out_fold,prefix,star_path
 	os.system(cmd_rnaeditor)
 
 def mapping_SE(fastq_1_path,CPU,alignment_out_fold,prefix,star_path,star_index,stringtie_path,gtf_path,picard_path,gatk_path,reference,indels,rnaeditor_path):
-	cmd_star="{} --twopassMode Basic --genomeDir {} --runThreadN {} --outSAMtype BAM SortedByCoordinate --twopass1readsN -1 --sjdbOverhang 99 --readFilesIn {} {} --outSAMattrRGline ID:RG_{} SM:{} PL:ILLUMINA --limitBAMsortRAM 60000000000 --outFileNamePrefix {}".format(star_path,star_index,CPU,fastq_1_path,prefix,prefix,alignment_out_fold+'/'+prefix)
+	cmd_star="{} --twopassMode Basic --genomeDir {} --runThreadN {} --outSAMtype BAM SortedByCoordinate --twopass1readsN -1 --sjdbOverhang 99 --readFilesIn {} --outSAMattrRGline ID:RG_{} SM:{} PL:ILLUMINA --limitBAMsortRAM 60000000000 --outFileNamePrefix {}".format(star_path,star_index,CPU,fastq_1_path,prefix,prefix,alignment_out_fold+'/'+prefix)
 	#print cmd_star
 	os.system(cmd_star)
 	cmd_stringtie="{} -G {} -A {}_exp.gtf -o {}.gtf {}Aligned.sortedByCoord.out.bam".format(stringtie_path,gtf_path,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)

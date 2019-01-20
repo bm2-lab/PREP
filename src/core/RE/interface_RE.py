@@ -12,6 +12,7 @@ def RNAEditing(opts):
 	output_fold=config_list["output_fold"]
 	itunes_bin_path="bin"
 	opitype_fold=config_list["opitype_fold"]
+	razer_path=config_list["razer_path"]
 	opitype_out_fold=output_fold + '/' + 'hlatyping'
 	opitype_ext=itunes_bin_path+'/optitype_ext.py'
 	prefix=config_list["sample_name"]
@@ -28,13 +29,9 @@ def RNAEditing(opts):
 	vep_cache=config_list["vep_cache_path"]
 	vep_path=config_list["vep_path"]
 	clean_fastq_fold=output_fold + '/' + 'clean_fastq'
-	netmhc_out_fold=output_fold + '/' + 'netmhc'
 	logfile_out_fold=output_fold + '/' + 'logfile'
 	human_peptide_path="database/GRCH38/Homo_sapiens.GRCh38.pep.all.fa"
-	netctl_out_fold=output_fold + '/' + 'netctl'
 	netMHCpan_path=config_list["netMHCpan_path"]
-	snv_fasta_file=netmhc_out_fold+'/'+prefix+'_snv.fasta'
-	snv_netmhc_out_file=netmhc_out_fold+'/'+prefix+'_snv_netmhc.tsv'
 	rna_fastq_1_path=config_list["tumor_rna_fastq_1"]
 	rna_fastq_2_path=config_list["tumor_rna_fastq_2"]
 	trimmomatic_path="software/trimmomatic-0.36.jar"
@@ -54,6 +51,7 @@ def RNAEditing(opts):
 	neo_file=alignment_out_fold+"/"+prefix+"_netctl_concact.tsv"
 	final_neo_file=alignment_out_fold+"/"+prefix+"_final_neoantigen.tsv"
 	rnaeditor_path="software/RNAEditor/"
+	result_fold=output_fold + '/' + 'result/'
 	time.sleep(1)
 	print "Read and parse parameters done..."
 	print "Check reference file path and input file path..."
@@ -117,20 +115,19 @@ def RNAEditing(opts):
 	print "check output directory"
 	if not os.path.exists(output_fold):
 		os.mkdir(output_fold)
-	if not os.path.exists(netmhc_out_fold):
-		os.mkdir(netmhc_out_fold)
-	if not os.path.exists(netctl_out_fold):
-		os.mkdir(netctl_out_fold)
 	if not os.path.exists(alignment_out_fold):
 		os.mkdir(alignment_out_fold)
 	if not os.path.exists(logfile_out_fold):
 		os.mkdir(logfile_out_fold)
 	if not os.path.exists(clean_fastq_fold):
 		os.mkdir(clean_fastq_fold)	
+	if not os.path.exists(result_fold):
+		os.mkdir(result_fold)	
 	print "ALL file paths are correct!"	
 	time.sleep(5)
 	print "start fastq quality control"
 	processes_0=[]
+	print MODE
 	if MODE=="PE":
 		q1=multiprocessing.Process(target=read_trimmomatic_PE,args=(rna_fastq_1_path,rna_fastq_2_path,trimmomatic_path,adapter_path_PE,tumor_fastq_prefix,logfile_out_fold,CPU,))
 		processes_0.append(q1)
@@ -150,9 +147,9 @@ def RNAEditing(opts):
 		h2=multiprocessing.Process(target=hlatyping_pe,args=(rna_fastq_1_path,rna_fastq_2_path,opitype_fold,opitype_out_fold,opitype_ext,prefix,))
 		processes_1.append(h2)
 	elif MODE=="SE":
-		h1=multiprocessing.Process(target=mapping_SE,args=(tumor_fastq_clean_1,CPU,alignment_out_fold,prefix,star_path,star_index_path,stringtie_path,gtf_path,java_picard_path,GATK_path,REFERENCE,indels,rnaeditor_path,))
+		h1=multiprocessing.Process(target=mapping_SE,args=(tumor_fastq_prefix,CPU,alignment_out_fold,prefix,star_path,star_index_path,stringtie_path,gtf_path,java_picard_path,GATK_path,REFERENCE,indels,rnaeditor_path,))
 		processes_1.append(h1)
-		h2=multiprocessing.Process(target=hlatyping_se,args=(rna_fastq_1_path,opitype_fold,opitype_out_fold,opitype_ext,prefix,))
+		h2=multiprocessing.Process(target=hlatyping_se,args=(tumor_fastq_prefix,opitype_fold,opitype_out_fold,opitype_ext,prefix,))
 		processes_1.append(h2)	
 	for h in processes_1:
 		h.daemon = True
@@ -178,3 +175,11 @@ def RNAEditing(opts):
 		t.start()
 	for t in processes_3:
 		t.join()
+
+####remove temp file#####
+	if os.path.exists(final_neo_file):
+		os.system("cp {} {}".format(final_neo_file,result_fold))
+		shutil.rmtree(alignment_out_fold)
+		shutil.rmtree(clean_fastq_fold)
+		shutil.rmtree(opitype_out_fold)
+		shutil.rmtree(logfile_out_fold)
