@@ -12,7 +12,7 @@ def RNAEditing(opts):
 	output_fold=config_list["output_fold"]
 	itunes_bin_path="bin"
 	opitype_fold=config_list["opitype_fold"]
-	razer_path=config_list["razer_path"]
+	#razer_path=config_list["razer_path"]
 	opitype_out_fold=output_fold + '/' + 'hlatyping'
 	opitype_ext=itunes_bin_path+'/optitype_ext.py'
 	prefix=config_list["sample_name"]
@@ -52,6 +52,7 @@ def RNAEditing(opts):
 	final_neo_file=alignment_out_fold+"/"+prefix+"_final_neoantigen.tsv"
 	rnaeditor_path="software/RNAEditor/"
 	result_fold=output_fold + '/' + 'result/'
+	temporal_file=int(config_list["tmp"])
 	time.sleep(1)
 	print "Read and parse parameters done..."
 	print "Check reference file path and input file path..."
@@ -177,9 +178,13 @@ def RNAEditing(opts):
 		t.join()
 
 ####remove temp file#####
-	if os.path.exists(final_neo_file):
-		os.system("cp {} {}".format(final_neo_file,result_fold))
-		shutil.rmtree(alignment_out_fold)
-		shutil.rmtree(clean_fastq_fold)
-		shutil.rmtree(opitype_out_fold)
-		shutil.rmtree(logfile_out_fold)
+	if temporal_file=="0":
+		if os.path.exists(final_neo_file):
+			os.system("cp {} {}".format(final_neo_file,result_fold))
+			shutil.rmtree(alignment_out_fold)
+			shutil.rmtree(clean_fastq_fold)
+			shutil.rmtree(opitype_out_fold)
+			shutil.rmtree(logfile_out_fold)
+	else:
+		print "Keep all tmporal files!"
+	print "ALL finished! Please check result files 'final_neoantigen.tsv' in 'result' fold"

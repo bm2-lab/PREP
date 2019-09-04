@@ -93,7 +93,7 @@ def hlatyping_se(raw_fastq_path_first,opitype_fold,opitype_out_fold,opitype_ext,
 
 
 def mapping_PE(fastq_1_path,fastq_2_path,CPU,alignment_out_fold,prefix,star_path,star_index,stringtie_path,gtf_path,picard_path,gatk_path,reference,indels,rnaeditor_path):
-	cmd_star="{} --twopassMode Basic --genomeDir {} --runThreadN {} --outSAMtype BAM SortedByCoordinate --twopass1readsN -1 --sjdbOverhang 99 --readFilesIn {} {} --outSAMattrRGline ID:RG_{} SM:{} PL:ILLUMINA --limitBAMsortRAM 60000000000 --outFileNamePrefix {}".format(star_path,star_index,CPU,fastq_1_path,fastq_2_path,prefix,prefix,alignment_out_fold+'/'+prefix)
+	cmd_star="{} --twopassMode Basic --genomeDir {} --runThreadN {} --outSAMtype BAM SortedByCoordinate --twopass1readsN -1 --sjdbOverhang 100 --readFilesIn {} {} --outSAMattrRGline ID:RG_{} SM:{} PL:ILLUMINA --limitBAMsortRAM 60000000000 --outFileNamePrefix {}".format(star_path,star_index,CPU,fastq_1_path,fastq_2_path,prefix,prefix,alignment_out_fold+'/'+prefix)
 	#print cmd_star
 	os.system(cmd_star)
 	cmd_stringtie="{} -G {} -A {}_exp.gtf -o {}.gtf {}Aligned.sortedByCoord.out.bam".format(stringtie_path,gtf_path,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix,alignment_out_fold+'/'+prefix)
