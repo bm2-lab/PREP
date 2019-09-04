@@ -76,7 +76,3 @@ qiliu@tongji.edu.cn
 Biological and Medical Big data Mining Lab  
 Tongji University    
 Shanghai, China. 
-
-## Neoantigen presentation illustration and algorithmic flow chart
-
-![](/doc/PREP_flow_chart.jpg)
