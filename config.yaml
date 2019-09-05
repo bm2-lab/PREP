@@ -1,8 +1,9 @@
-tumor_rna_fastq_1: /home/zhouchi/ncbi/public/sra/SRR2603888_1.fastq
-tumor_rna_fastq_2: /home/zhouchi/ncbi/public/sra/SRR2603888_2.fastq
+tumor_rna_fastq_1: /home/zhouchi/test/SRR2603888_1.fastq
+tumor_rna_fastq_2: /home/zhouchi/test/SRR2603888_2.fastq
 output_fold: SRR2603888
 sample_name: SRR2603888
 thread_number: 20
+tmp: 1
 ##### specify other software excutable path in your system as you have installed them.
 opitype_fold: /home/zhouchi/software/OptiType/
 vep_cache_path: /home/zhouchi/vep_data/
