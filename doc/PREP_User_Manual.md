@@ -160,10 +160,9 @@ User should set all the parameters in the configuration file `config.yaml` . The
 ## Output Files 
 
 The output files are the following: 
-1.  snv_neo_model.tsv 
+1.  final_neoantigen.tsv 
 
-    The file is a TSV file with the extracted mutated peptides derived from nonsynonymous point mutation with a model-based
-    score measures the immunity of neoepitopes.
+    The file is a TSV file with the extracted mutated peptides derived from RNA editing with a quantitative score measures the immunity of neoepitopes.
 
 
 ### Column explanation
@@ -188,7 +187,7 @@ The prediction output (final_neoantigen.tsv) for each peptide pair consists of t
 | MT_Binding_level_des  | Binding level description of mutated peptide. |
 | WT_Binding_level_des  | Binding level description of normal peptide. |
 | Editing_ratio  | RNA ediitng level of the mutation. |
-| Neo_score	| Refined immunogenicty score for neoepitopes (calculated by RefinedNeo). |
+| Neo_score	| Immunogenicty score for RNA editing neoepitopes. |
 
 
 ## Contact   
