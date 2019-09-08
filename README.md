@@ -6,7 +6,7 @@ RNA editing is a source of transcriptomic diversity, mainly in non-coding region
 Chi Zhou and Qi Liu
 
 #### Citation:
-Systematically Characterizing A-to-I RNA Editing Neoantigens in Cancer, Submitted, 2018.
+Systematically Characterizing A-to-I RNA Editing Neoantigens in Cancer, Submitted, 2019.
 
 ## Dependencies  
 
