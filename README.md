@@ -47,7 +47,32 @@ PREP currently tested on x86_64 on ubuntu 16.04.
 * [math](https://pypi.org/project/math/)
 * [matplotlib](https://pypi.org/project/matplotlib/)
 
+## Installation via Docker
+Docker image of PREP is at https://hub.docker.com/r/bm2lab/prep/.
 
+1. Install Docker on your computer and make sure it works.
+
+2. Call docker `pull bm2lab/prep` which will download the Docker image.
+
+3. Run the image in interactive mode with your dataset:
+        
+		docker run -it -v /your/path/to/dataset/:/home/bioworker/dataset bm2lab/prep /bin/bash
+
+4. Change directory into /home/bioworker/project/PREP:
+
+		cd /home/bioworker/project/PREP
+
+5. Download reference data:
+
+		bash data_download.sh
+
+6. Edit `config.yaml` and fill the proper path of input files.
+
+7. Run the program with follow commands:
+
+		python PREP.py RE -i config.yaml
+            
+            
 ### Install from source
 1. Install all software and python package listed above.
 
