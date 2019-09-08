@@ -187,7 +187,7 @@ The prediction output (final_neoantigen.tsv) for each peptide pair consists of t
 | MT_Binding_level_des  | Binding level description of mutated peptide. |
 | WT_Binding_level_des  | Binding level description of normal peptide. |
 | Editing_ratio  | RNA ediitng level of the mutation. |
-| Neo_score	| Immunogenicty score for RNA editing neoepitopes. |
+| Neo_score	| Immunogenicty score for RNA editing neoepitope. |
 
 
 ## Contact   
